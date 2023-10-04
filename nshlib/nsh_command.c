@@ -435,6 +435,10 @@ static const struct cmdmap_s g_cmdmap[] =
 #  endif
 #endif
 
+#if defined(CONFIG_FS_PROCFS) && !defined(CONFIG_NSH_DISABLE_PIDOF)
+  CMD_MAP("pidof",   cmd_pidof, 2, 2, "<name>"),
+#endif
+
 #if defined(CONFIG_PM) && !defined(CONFIG_NSH_DISABLE_PMCONFIG)
   CMD_MAP("pmconfig", cmd_pmconfig, 1, 4,
     "[stay|relax] [normal|idle|standby|sleep] [domain]"),
@@ -675,7 +679,7 @@ static inline void help_cmdlist(FAR struct nsh_vtbl_s *vtbl)
         }
     }
 
-  colwidth += 2;
+  colwidth += HELP_TABSIZE;
 
   /* Determine the number of commands to put on one line */
 
@@ -890,7 +894,7 @@ static inline void help_builtins(FAR struct nsh_vtbl_s *vtbl)
       return;
     }
 
-  column_width += 2;
+  column_width += HELP_TABSIZE;
 
   /* Determine the number of commands to put on one line */
 
@@ -913,7 +917,7 @@ static inline void help_builtins(FAR struct nsh_vtbl_s *vtbl)
   nsh_write(vtbl, g_builtin_prompt, strlen(g_builtin_prompt));
   for (i = 0; i < num_builtin_rows; i++)
     {
-      offset = 4;
+      offset = HELP_TABSIZE;
       memset(line, ' ', offset);
 
       for (j = 0, k = i;

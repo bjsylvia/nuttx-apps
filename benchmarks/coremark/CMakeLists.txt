@@ -25,11 +25,20 @@ if(CONFIG_BENCHMARK_COREMARK)
   # ############################################################################
 
   set(COREMARKAPP_DIR ${CMAKE_CURRENT_LIST_DIR}/coremark)
-  if(NOT EXISTS ${CMAKE_CURRENT_LIST_DIR}/coremark)
-    FetchContent_Declare(coremark
-                         URL https://github.com/eembc/coremark/archive/main.zip)
-    FetchContent_MakeAvailable(coremark)
-    set(COREMARKAPP_DIR ${coremark_SOURCE_DIR})
+
+  if(NOT EXISTS ${COREMARKAPP_DIR})
+    FetchContent_Declare(
+      coremark_fetch
+      URL https://github.com/eembc/coremark/archive/main.zip SOURCE_DIR
+          ${CMAKE_CURRENT_LIST_DIR}/coremark BINARY_DIR
+          ${CMAKE_BINARY_DIR}/apps/benchmarks/coremark/coremark
+      DOWNLOAD_NO_PROGRESS true
+      TIMEOUT 30)
+
+    FetchContent_GetProperties(coremark_fetch)
+    if(NOT coremark_fetch_POPULATED)
+      FetchContent_Populate(coremark_fetch)
+    endif()
   endif()
 
   if(CONFIG_COREMARK_MULTITHREAD_OVERRIDE)
